@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Target Analyzer — Analizador y Auditor Web</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Fondo con efecto de gradiente ambiental -->
+  <div class="ambient-glow"></div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2"></circle>
+            <line x1="12" y1="2" x2="12" y2="4"></line>
+            <line x1="12" y1="20" x2="12" y2="22"></line>
+            <line x1="2" y1="12" x2="4" y2="12"></line>
+            <line x1="20" y1="12" x2="22" y2="12"></line>
+          </svg>
+        </div>
+        <div>
+          <h1 class="logo-title">Target<span class="highlight">Analyzer</span></h1>
+          <p class="logo-subtitle">Inteligencia e inspección web profunda vía Bot Crawler</p>
+        </div>
+      </div>
+      <div class="status-indicator">
+        <span class="status-dot"></span>
+        <span class="status-text" id="engineStatus">Motor Bot Listo</span>
+      </div>
+    </header>
+
+    <!-- Search Section -->
+    <section class="search-section">
+      <form id="analyzeForm" class="search-form" autocomplete="off">
+        <div class="input-wrapper">
+          <span class="input-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+          </span>
+          <input 
+            type="text" 
+            id="urlInput" 
+            class="url-input" 
+            placeholder="Introduce la URL objetivo (ej. https://github.com o apple.com)"
+            required
+            spellcheck="false"
+          >
+          <button type="button" id="clearBtn" class="clear-btn" title="Limpiar campo" style="display: none;">
+            &times;
+          </button>
+        </div>
+        <button type="submit" id="analyzeBtn" class="submit-btn">
+          <span class="btn-text">Escanear Objetivo</span>
+          <span class="btn-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg>
+          </span>
+        </button>
+      </form>
+
+      <!-- Quick sample suggestions -->
+      <div class="quick-samples">
+        <span class="samples-label">Objetivos sugeridos:</span>
+        <button type="button" class="sample-tag" data-url="https://github.com">github.com</button>
+        <button type="button" class="sample-tag" data-url="https://wikipedia.org">wikipedia.org</button>
+        <button type="button" class="sample-tag" data-url="https://cloudflare.com">cloudflare.com</button>
+        <button type="button" class="sample-tag" data-url="https://vercel.com">vercel.com</button>
+      </div>
+    </section>
+
+    <!-- Scanning Progress Indicator (Hidden by default) -->
+    <div id="scanningState" class="scanning-card" style="display: none;">
+      <div class="scanner-header">
+        <div class="pulse-loader">
+          <div class="pulse-ring"></div>
+          <div class="pulse-core"></div>
+        </div>
+        <div class="scanner-text">
+          <h3 id="scanStepTitle">Desplegando Bot de Inspección...</h3>
+          <p id="scanStepDesc">Conectando al servidor remoto y capturando telemetría</p>
+        </div>
+      </div>
+      <div class="progress-bar-container">
+        <div id="scanProgressBar" class="progress-bar-fill"></div>
+      </div>
+      <div class="scan-badges">
+        <span class="scan-pill" id="pillDns">Resolviendo DNS</span>
+        <span class="scan-pill" id="pillSsl">Verificando SSL/TLS</span>
+        <span class="scan-pill" id="pillBot">Tomando Captura (Screenshot)</span>
+        <span class="scan-pill" id="pillTech">Extrayendo Tecnologías</span>
+      </div>
+    </div>
+
+    <!-- Error Banner (Hidden by default) -->
+    <div id="errorBanner" class="error-banner" style="display: none;">
+      <div class="error-icon">⚠️</div>
+      <div class="error-content">
+        <h4 id="errorTitle">Error en el análisis</h4>
+        <p id="errorMsg">No se pudo acceder a la página especificada. Verifica la URL y reintenta.</p>
+      </div>
+      <button type="button" id="closeErrorBtn" class="close-error">&times;</button>
+    </div>
+
+    <!-- Results Section (Hidden until scan finishes) -->
+    <main id="resultsSection" class="results-container" style="display: none;">
+      
+      <!-- Top Bar: Meta Info & Status -->
+      <section class="overview-strip">
+        <div class="overview-item">
+          <span class="label">Objetivo</span>
+          <span class="value-highlight" id="resTargetUrl">https://github.com</span>
+        </div>
+        <div class="overview-item">
+          <span class="label">Estado HTTP</span>
+          <span class="badge badge-success" id="resHttpStatus">200 OK</span>
+        </div>
+        <div class="overview-item">
+          <span class="label">Tiempo de Respuesta</span>
+          <span class="value" id="resResponseTime">248 ms</span>
+        </div>
+        <div class="overview-item">
+          <span class="label">Seguridad Global</span>
+          <span class="badge badge-shield" id="resSecurityGrade">Grado A+</span>
+        </div>
+        <div class="overview-actions">
+          <button type="button" id="exportJsonBtn" class="action-btn" title="Exportar reporte en JSON">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Exportar JSON
+          </button>
+        </div>
+      </section>
+
+      <!-- Main Results Grid -->
+      <div class="dashboard-grid">
+        
+        <!-- Left / Hero Column: Screenshot Showcase (CRÍTICO) -->
+        <article class="card card-screenshot">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-icon">📸</span>
+              <div>
+                <h2>Captura en Vivo del Bot</h2>
+                <p class="card-subtitle">Renderizado real tomado por el navegador headless</p>
+              </div>
+            </div>
+            <div class="screenshot-actions">
+              <button type="button" id="zoomScreenshotBtn" class="pill-button" title="Ver en pantalla completa">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M15 3h6v6"></path>
+                  <path d="M9 21H3v-6"></path>
+                  <path d="M21 3l-7 7"></path>
+                  <path d="M3 21l7-7"></path>
+                </svg>
+                Ampliar
+              </button>
+              <a id="downloadScreenshotBtn" href="#" download="screenshot.png" class="pill-button" title="Descargar imagen">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Guardar
+              </a>
+            </div>
+          </div>
+
+          <!-- Browser Frame Mockup -->
+          <div class="browser-window">
+            <div class="browser-toolbar">
+              <div class="window-controls">
+                <span class="win-btn close"></span>
+                <span class="win-btn min"></span>
+                <span class="win-btn max"></span>
+              </div>
+              <div class="browser-url-bar">
+                <span class="lock-icon">🔒</span>
+                <span id="browserFrameUrl" class="frame-url-text">https://...</span>
+              </div>
+            </div>
+            <div class="screenshot-display-area" id="screenshotContainer">
+              <img id="siteScreenshot" src="" alt="Captura del sitio web objetivo" class="screenshot-img">
+              <div class="screenshot-overlay">
+                <span>Click para vista interactiva completa</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Snapshot Metadata -->
+          <div class="screenshot-footer">
+            <span id="screenshotDimensions">Resolución: 1280 x 800</span>
+            <span id="screenshotTimestamp">Capturado: Justo ahora</span>
+          </div>
+        </article>
+
+        <!-- Right Column: Data Analysis Cards -->
+        <div class="data-column">
+          
+          <!-- Card 1: Red y Servidor (IP & Host) -->
+          <article class="card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <span class="card-icon">🌐</span>
+                <div>
+                  <h3>Red y Servidor</h3>
+                  <p class="card-subtitle">Resolución de infraestructura y DNS</p>
+                </div>
+              </div>
+            </div>
+            <div class="details-table">
+              <div class="detail-row">
+                <span class="detail-key">Dirección IP (IPv4)</span>
+                <span class="detail-val copyable" id="valIp">140.82.121.4</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-key">Servidor Web</span>
+                <span class="detail-val" id="valServer">GitHub.com / Nginx</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-key">Proveedor / ASN</span>
+                <span class="detail-val" id="valAsn">AS36459 GitHub, Inc.</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-key">Ubicación Estimada</span>
+                <span class="detail-val" id="valLocation">Estados Unidos 🇺🇸</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 2: Seguridad HTTPS y Cabeceras -->
+          <article class="card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <span class="card-icon">🛡️</span>
+                <div>
+                  <h3>Seguridad y Certificado SSL</h3>
+                  <p class="card-subtitle">Cifrado de transporte y cabeceras HTTP</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="ssl-highlight-box">
+              <div class="ssl-status-icon success" id="sslIcon">✓</div>
+              <div class="ssl-info">
+                <h4 id="sslTitle">Certificado Válido y Activo</h4>
+                <p id="sslIssuer">Emitido por: DigiCert Global Root G2</p>
+                <span class="ssl-expiry" id="sslExpiry">Expira en: 184 días</span>
+              </div>
+            </div>
+
+            <div class="headers-check">
+              <h5 class="headers-check-title">Cabeceras de Protección:</h5>
+              <div class="headers-grid" id="securityHeadersGrid">
+                <!-- Badges generados por JS -->
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 3: Tecnologías Detectadas -->
+          <article class="card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <span class="card-icon">⚡</span>
+                <div>
+                  <h3>Tecnologías Detectadas</h3>
+                  <p class="card-subtitle">CMS, librerías frontend y utilidades</p>
+                </div>
+              </div>
+            </div>
+            <div class="tech-tags-container" id="techTagsContainer">
+              <!-- Tags generados por JS -->
+            </div>
+          </article>
+
+          <!-- Card 4: Metadatos y Estructura -->
+          <article class="card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <span class="card-icon">📄</span>
+                <div>
+                  <h3>Metadatos y Título</h3>
+                  <p class="card-subtitle">Información semántica de la página</p>
+                </div>
+              </div>
+            </div>
+            <div class="meta-content">
+              <div class="meta-group">
+                <span class="meta-label">Título del Sitio</span>
+                <p class="meta-text" id="metaTitle">GitHub: Let's build from here</p>
+              </div>
+              <div class="meta-group">
+                <span class="meta-label">Descripción</span>
+                <p class="meta-text" id="metaDescription">Plataforma líder mundial en desarrollo y alojamiento de software.</p>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- Empty / Initial Placeholder (Visible before first search) -->
+    <div id="emptyState" class="empty-state">
+      <div class="empty-illustration">
+        <div class="radar-circle circle-1"></div>
+        <div class="radar-circle circle-2"></div>
+        <div class="radar-circle circle-3"></div>
+        <div class="radar-scanner"></div>
+        <div class="radar-center-icon">🎯</div>
+      </div>
+      <h2>Listo para analizar cualquier sitio web</h2>
+      <p>Introduce una dirección URL arriba para que el bot visite el objetivo, capture una instantánea de la página y extraiga toda la información de red, seguridad y tecnologías.</p>
+      <div class="feature-bullets">
+        <div class="bullet-item">
+          <span class="bullet-icon">📸</span>
+          <span>Captura de pantalla real de alta resolución</span>
+        </div>
+        <div class="bullet-item">
+          <span class="bullet-icon">🌐</span>
+          <span>Detección de IP y servidor</span>
+        </div>
+        <div class="bullet-item">
+          <span class="bullet-icon">🔒</span>
+          <span>Auditoría de seguridad HTTPS y SSL</span>
+        </div>
+        <div class="bullet-item">
+          <span class="bullet-icon">🧩</span>
+          <span>Identificación de tecnologías y librerías</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para pantalla completa del Screenshot -->
+    <div id="screenshotModal" class="modal-backdrop" style="display: none;">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3 id="modalTitle">Captura de Pantalla Completa</h3>
+          <button type="button" id="closeModalBtn" class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <img id="modalImg" src="" alt="Captura de pantalla completa">
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Target Analyzer &bull; Diseñado con HTML5, CSS3 moderno y JavaScript &bull; Engine: Node.js &amp; Headless Bot</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

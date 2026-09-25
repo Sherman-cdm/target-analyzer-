@@ -1,0 +1,20 @@
+{
+  "name": "target-analyzer",
+  "version": "1.0.0",
+  "description": "Analizador y auditor web en tiempo real con bot crawler y screenshots",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "web-analyzer",
+    "bot",
+    "puppeteer",
+    "security-audit",
+    "screenshot",
+    "dns-lookup"
+  ],
+  "author": "Sherman-cdm",
+  "license": "MIT"
+}

@@ -11,8 +11,12 @@ Aplicación web para analizar sitios web a través de una URL. Proporciona diagn
 - **Bot / Crawler:** Puppeteer (Headless Chrome) para navegación, recolección de metadatos y generación de screenshots.
 - **Módulos de Auditoría:** DNS/IP lookup, inspección SSL/TLS, auditor de cabeceras HTTP de seguridad, analizador de firmas tecnológicas.
 
-## 3. Hoja de Ruta
-- [ ] **Fase 1 (En curso):** Construcción del Frontend moderno:
+## 3. Estrategia Git y Flujo de Trabajo
+- **Rama principal de desarrollo:** `develop` (Todo el trabajo y nuevos PRs se dirigen a `develop`).
+- **Rama de producción:** `main`.
+
+## 4. Hoja de Ruta
+- [x] **Fase 1 (Frontend):** Construcción del Frontend moderno:
   - Estructura HTML (`public/index.html`).
   - Estilos CSS con diseño moderno, componentes glassmorphism, responsive grid y animaciones (`public/styles.css`).
   - Lógica JavaScript para manejo de eventos, validaciones, estados de carga y renderizado de resultados (`public/app.js`).
@@ -25,7 +29,7 @@ Aplicación web para analizar sitios web a través de una URL. Proporciona diagn
   - Detección de tecnologías frontend, CMS y servidor.
 - [ ] **Fase 3:** Conexión end-to-end, pruebas y refinamientos.
 
-## 4. Estructura de Directorios Recomendada
+## 5. Estructura de Directorios Recomendada
 ```
 target-analyzer-/
 ├── public/

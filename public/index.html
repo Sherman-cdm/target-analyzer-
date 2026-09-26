@@ -21,7 +21,7 @@
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
             <circle cx="12" cy="12" r="6"></circle>
-            <circle cx="12" cy="12" r="2"></circle>
+            <circle cx="12" cy="2"></circle>
             <line x1="12" y1="2" x2="12" y2="4"></line>
             <line x1="12" y1="20" x2="12" y2="22"></line>
             <line x1="2" y1="12" x2="4" y2="12"></line>
@@ -33,9 +33,11 @@
           <p class="logo-subtitle">Inteligencia e inspección web profunda vía Bot Crawler</p>
         </div>
       </div>
-      <div class="status-indicator">
-        <span class="status-dot"></span>
-        <span class="status-text" id="engineStatus">Motor Bot Listo</span>
+      <div class="header-right">
+        <div class="status-indicator">
+          <span class="status-dot"></span>
+          <span class="status-text" id="engineStatus">Motor Bot Listo</span>
+        </div>
       </div>
     </header>
 
@@ -80,6 +82,16 @@
         <button type="button" class="sample-tag" data-url="https://wikipedia.org">wikipedia.org</button>
         <button type="button" class="sample-tag" data-url="https://cloudflare.com">cloudflare.com</button>
         <button type="button" class="sample-tag" data-url="https://vercel.com">vercel.com</button>
+      </div>
+
+      <!-- Recent History Bar -->
+      <div id="recentHistoryContainer" class="recent-history-bar" style="display: none;">
+        <div class="history-label-group">
+          <span class="history-icon">🕒</span>
+          <span class="history-label">Recientes:</span>
+        </div>
+        <div id="historyList" class="history-items"></div>
+        <button type="button" id="clearHistoryBtn" class="clear-history-link" title="Borrar historial">Limpiar</button>
       </div>
     </section>
 
@@ -149,172 +161,260 @@
         </div>
       </section>
 
-      <!-- Main Results Grid -->
-      <div class="dashboard-grid">
-        
-        <!-- Left / Hero Column: Screenshot Showcase (CRÍTICO) -->
-        <article class="card card-screenshot">
-          <div class="card-header">
-            <div class="card-title-group">
-              <span class="card-icon">📸</span>
-              <div>
-                <h2>Captura en Vivo del Bot</h2>
-                <p class="card-subtitle">Renderizado real tomado por el navegador headless</p>
-              </div>
-            </div>
-            <div class="screenshot-actions">
-              <button type="button" id="zoomScreenshotBtn" class="pill-button" title="Ver en pantalla completa">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M15 3h6v6"></path>
-                  <path d="M9 21H3v-6"></path>
-                  <path d="M21 3l-7 7"></path>
-                  <path d="M3 21l7-7"></path>
-                </svg>
-                Ampliar
-              </button>
-              <a id="downloadScreenshotBtn" href="#" download="screenshot.png" class="pill-button" title="Descargar imagen">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                Guardar
-              </a>
-            </div>
-          </div>
+      <!-- Navigation Tabs -->
+      <nav class="results-nav-tabs">
+        <button type="button" class="tab-btn active" data-tab="tabDashboard">
+          <span>📊</span> Resumen &amp; Captura
+        </button>
+        <button type="button" class="tab-btn" data-tab="tabSecurity">
+          <span>🛡️</span> Auditoría de Seguridad
+        </button>
+        <button type="button" class="tab-btn" data-tab="tabNetwork">
+          <span>🌐</span> Red &amp; DNS
+        </button>
+        <button type="button" class="tab-btn" data-tab="tabTechnologies">
+          <span>⚡</span> Tecnologías
+        </button>
+      </nav>
 
-          <!-- Browser Frame Mockup -->
-          <div class="browser-window">
-            <div class="browser-toolbar">
-              <div class="window-controls">
-                <span class="win-btn close"></span>
-                <span class="win-btn min"></span>
-                <span class="win-btn max"></span>
-              </div>
-              <div class="browser-url-bar">
-                <span class="lock-icon">🔒</span>
-                <span id="browserFrameUrl" class="frame-url-text">https://...</span>
-              </div>
-            </div>
-            <div class="screenshot-display-area" id="screenshotContainer">
-              <img id="siteScreenshot" src="" alt="Captura del sitio web objetivo" class="screenshot-img">
-              <div class="screenshot-overlay">
-                <span>Click para vista interactiva completa</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Snapshot Metadata -->
-          <div class="screenshot-footer">
-            <span id="screenshotDimensions">Resolución: 1280 x 800</span>
-            <span id="screenshotTimestamp">Capturado: Justo ahora</span>
-          </div>
-        </article>
-
-        <!-- Right Column: Data Analysis Cards -->
-        <div class="data-column">
+      <!-- TAB 1: Main Dashboard Grid -->
+      <div id="tabDashboard" class="tab-content active">
+        <div class="dashboard-grid">
           
-          <!-- Card 1: Red y Servidor (IP & Host) -->
-          <article class="card">
+          <!-- Left / Hero Column: Screenshot Showcase (CRÍTICO) -->
+          <article class="card card-screenshot">
             <div class="card-header">
               <div class="card-title-group">
-                <span class="card-icon">🌐</span>
+                <span class="card-icon">📸</span>
                 <div>
-                  <h3>Red y Servidor</h3>
-                  <p class="card-subtitle">Resolución de infraestructura y DNS</p>
+                  <h2>Captura en Vivo del Bot</h2>
+                  <p class="card-subtitle">Renderizado real tomado por el navegador headless</p>
+                </div>
+              </div>
+              
+              <!-- Device & Action Controls -->
+              <div class="screenshot-actions">
+                <!-- Device Viewport Switcher -->
+                <div class="device-switcher" title="Modo de vista previa">
+                  <button type="button" class="device-btn active" data-device="desktop" title="Vista Escritorio (1280x800)">
+                    🖥️
+                  </button>
+                  <button type="button" class="device-btn" data-device="tablet" title="Vista Tablet (768x1024)">
+                    📱 Tablet
+                  </button>
+                  <button type="button" class="device-btn" data-device="mobile" title="Vista Móvil (390x844)">
+                    📱 Móvil
+                  </button>
+                </div>
+
+                <button type="button" id="zoomScreenshotBtn" class="pill-button" title="Ver en pantalla completa">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 3h6v6"></path>
+                    <path d="M9 21H3v-6"></path>
+                    <path d="M21 3l-7 7"></path>
+                    <path d="M3 21l7-7"></path>
+                  </svg>
+                  Ampliar
+                </button>
+                <a id="downloadScreenshotBtn" href="#" download="screenshot.png" class="pill-button" title="Descargar imagen">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  Guardar
+                </a>
+              </div>
+            </div>
+
+            <!-- Browser Frame Mockup -->
+            <div id="browserMockup" class="browser-window mode-desktop">
+              <div class="browser-toolbar">
+                <div class="window-controls">
+                  <span class="win-btn close"></span>
+                  <span class="win-btn min"></span>
+                  <span class="win-btn max"></span>
+                </div>
+                <div class="browser-url-bar">
+                  <span class="lock-icon">🔒</span>
+                  <span id="browserFrameUrl" class="frame-url-text">https://...</span>
+                </div>
+              </div>
+              <div class="screenshot-display-area" id="screenshotContainer">
+                <img id="siteScreenshot" src="" alt="Captura del sitio web objetivo" class="screenshot-img">
+                <div class="screenshot-overlay">
+                  <span>Click para vista interactiva completa</span>
                 </div>
               </div>
             </div>
-            <div class="details-table">
-              <div class="detail-row">
-                <span class="detail-key">Dirección IP (IPv4)</span>
-                <span class="detail-val copyable" id="valIp">140.82.121.4</span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-key">Servidor Web</span>
-                <span class="detail-val" id="valServer">GitHub.com / Nginx</span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-key">Proveedor / ASN</span>
-                <span class="detail-val" id="valAsn">AS36459 GitHub, Inc.</span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-key">Ubicación Estimada</span>
-                <span class="detail-val" id="valLocation">Estados Unidos 🇺🇸</span>
-              </div>
+
+            <!-- Snapshot Metadata -->
+            <div class="screenshot-footer">
+              <span id="screenshotDimensions">Resolución: 1280 x 800</span>
+              <span id="screenshotTimestamp">Capturado: Justo ahora</span>
             </div>
           </article>
 
-          <!-- Card 2: Seguridad HTTPS y Cabeceras -->
-          <article class="card">
-            <div class="card-header">
-              <div class="card-title-group">
-                <span class="card-icon">🛡️</span>
-                <div>
-                  <h3>Seguridad y Certificado SSL</h3>
-                  <p class="card-subtitle">Cifrado de transporte y cabeceras HTTP</p>
-                </div>
-              </div>
-            </div>
+          <!-- Right Column: Data Summary Cards -->
+          <div class="data-column">
             
-            <div class="ssl-highlight-box">
-              <div class="ssl-status-icon success" id="sslIcon">✓</div>
-              <div class="ssl-info">
-                <h4 id="sslTitle">Certificado Válido y Activo</h4>
-                <p id="sslIssuer">Emitido por: DigiCert Global Root G2</p>
-                <span class="ssl-expiry" id="sslExpiry">Expira en: 184 días</span>
-              </div>
-            </div>
-
-            <div class="headers-check">
-              <h5 class="headers-check-title">Cabeceras de Protección:</h5>
-              <div class="headers-grid" id="securityHeadersGrid">
-                <!-- Badges generados por JS -->
-              </div>
-            </div>
-          </article>
-
-          <!-- Card 3: Tecnologías Detectadas -->
-          <article class="card">
-            <div class="card-header">
-              <div class="card-title-group">
-                <span class="card-icon">⚡</span>
-                <div>
-                  <h3>Tecnologías Detectadas</h3>
-                  <p class="card-subtitle">CMS, librerías frontend y utilidades</p>
+            <!-- Card 1: Red y Servidor (IP & Host) -->
+            <article class="card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <span class="card-icon">🌐</span>
+                  <div>
+                    <h3>Red y Servidor</h3>
+                    <p class="card-subtitle">Infraestructura del objetivo</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="tech-tags-container" id="techTagsContainer">
-              <!-- Tags generados por JS -->
-            </div>
-          </article>
-
-          <!-- Card 4: Metadatos y Estructura -->
-          <article class="card">
-            <div class="card-header">
-              <div class="card-title-group">
-                <span class="card-icon">📄</span>
-                <div>
-                  <h3>Metadatos y Título</h3>
-                  <p class="card-subtitle">Información semántica de la página</p>
+              <div class="details-table">
+                <div class="detail-row">
+                  <span class="detail-key">Dirección IP (IPv4)</span>
+                  <span class="detail-val copyable" id="valIp" title="Click para copiar">140.82.121.4</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-key">Servidor Web</span>
+                  <span class="detail-val" id="valServer">GitHub.com / Nginx</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-key">Proveedor / ASN</span>
+                  <span class="detail-val" id="valAsn">AS36459 GitHub, Inc.</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-key">Ubicación Estimada</span>
+                  <span class="detail-val" id="valLocation">Estados Unidos 🇺🇸</span>
                 </div>
               </div>
-            </div>
-            <div class="meta-content">
-              <div class="meta-group">
-                <span class="meta-label">Título del Sitio</span>
-                <p class="meta-text" id="metaTitle">GitHub: Let's build from here</p>
-              </div>
-              <div class="meta-group">
-                <span class="meta-label">Descripción</span>
-                <p class="meta-text" id="metaDescription">Plataforma líder mundial en desarrollo y alojamiento de software.</p>
-              </div>
-            </div>
-          </article>
+            </article>
 
+            <!-- Card 2: Seguridad HTTPS y Cabeceras -->
+            <article class="card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <span class="card-icon">🛡️</span>
+                  <div>
+                    <h3>Seguridad y Certificado SSL</h3>
+                    <p class="card-subtitle">Cifrado TLS y cabeceras clave</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="ssl-highlight-box">
+                <div class="ssl-status-icon success" id="sslIcon">✓</div>
+                <div class="ssl-info">
+                  <h4 id="sslTitle">Certificado Válido y Activo</h4>
+                  <p id="sslIssuer">Emitido por: DigiCert Global Root G2</p>
+                  <span class="ssl-expiry" id="sslExpiry">Expira en: 184 días</span>
+                </div>
+              </div>
+
+              <div class="headers-check">
+                <h5 class="headers-check-title">Cabeceras de Protección Básicas:</h5>
+                <div class="headers-grid" id="securityHeadersGrid"></div>
+              </div>
+            </article>
+
+            <!-- Card 3: Tecnologías Rápidas -->
+            <article class="card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <span class="card-icon">⚡</span>
+                  <div>
+                    <h3>Tecnologías Detectadas</h3>
+                    <p class="card-subtitle">Librerías y frameworks principales</p>
+                  </div>
+                </div>
+              </div>
+              <div class="tech-tags-container" id="techTagsContainer"></div>
+            </article>
+
+            <!-- Card 4: Metadatos -->
+            <article class="card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <span class="card-icon">📄</span>
+                  <div>
+                    <h3>Metadatos Semánticos</h3>
+                    <p class="card-subtitle">Información del DOM y SEO</p>
+                  </div>
+                </div>
+              </div>
+              <div class="meta-content">
+                <div class="meta-group">
+                  <span class="meta-label">Título del Sitio</span>
+                  <p class="meta-text" id="metaTitle">Título</p>
+                </div>
+                <div class="meta-group">
+                  <span class="meta-label">Descripción</span>
+                  <p class="meta-text" id="metaDescription">Descripción</p>
+                </div>
+              </div>
+            </article>
+
+          </div>
         </div>
       </div>
+
+      <!-- TAB 2: Seguridad Profunda -->
+      <div id="tabSecurity" class="tab-content">
+        <div class="security-deep-dive">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <span class="card-icon">🔒</span>
+                <div>
+                  <h2>Auditoría Completa de Seguridad Web</h2>
+                  <p class="card-subtitle">Evaluación de políticas de protección contra ataques XSS, Clickjacking y Man-in-the-Middle</p>
+                </div>
+              </div>
+              <div class="score-badge" id="securityScoreBadge">Score: 92/100</div>
+            </div>
+
+            <div class="security-cards-grid" id="securityDeepList">
+              <!-- Rellenado dinámicamente con explicaciones de seguridad -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: Red & DNS -->
+      <div id="tabNetwork" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-icon">🌐</span>
+              <div>
+                <h2>Infraestructura de Red y DNS</h2>
+                <p class="card-subtitle">Información del servidor, registros de dominio y conectividad</p>
+              </div>
+            </div>
+          </div>
+          <div class="dns-records-grid" id="dnsRecordsGrid">
+            <!-- Rellenado dinámicamente -->
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: Tecnologías Extendidas -->
+      <div id="tabTechnologies" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-icon">⚡</span>
+              <div>
+                <h2>Ecosistema y Stack Tecnológico</h2>
+                <p class="card-subtitle">Identificación clasificada por categorías</p>
+              </div>
+            </div>
+          </div>
+          <div class="tech-ecosystem-grid" id="techEcosystemGrid">
+            <!-- Rellenado dinámicamente -->
+          </div>
+        </div>
+      </div>
+
     </main>
 
     <!-- Empty / Initial Placeholder (Visible before first search) -->
@@ -361,9 +461,14 @@
       </div>
     </div>
 
+    <!-- Toast Notification (Copiado de IP, avisos rápidos) -->
+    <div id="toastNotification" class="toast-popup" style="display: none;">
+      <span id="toastMsg">Copiado al portapapeles</span>
+    </div>
+
     <!-- Footer -->
     <footer class="app-footer">
-      <p>Target Analyzer &bull; Diseñado con HTML5, CSS3 moderno y JavaScript &bull; Engine: Node.js &amp; Headless Bot</p>
+      <p>Target Analyzer &bull; Diseñado con HTML5, CSS3 moderno y JavaScript &bull; Rama develop activa</p>
     </footer>
   </div>
 

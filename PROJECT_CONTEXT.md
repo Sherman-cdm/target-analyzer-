@@ -12,8 +12,13 @@ Aplicación web para analizar sitios web a través de una URL. Proporciona diagn
 - **Módulos de Auditoría:** DNS/IP lookup, inspección SSL/TLS, auditor de cabeceras HTTP de seguridad, analizador de firmas tecnológicas.
 
 ## 3. Estrategia Git y Flujo de Trabajo
-- **Rama principal de desarrollo:** `develop` (Todo el trabajo y nuevos PRs se dirigen a `develop`).
-- **Rama de producción:** `main`.
+- **Rama `develop` (Activa / Trabajo en curso):**
+  - Es el entorno principal de desarrollo y experimentación.
+  - Todo nuevo componente, ajuste y feature se escribe, prueba y commitea directamente aquí.
+- **Rama `main` (Esqueleto / Respaldo y Producto Final):**
+  - Actúa como base limpia/esqueleto de seguridad por si se rompe código en desarrollo.
+  - No se toca para tareas diarias.
+  - Solo recibirá el merge final cuando el producto esté completamente terminado, probado y aprobado.
 
 ## 4. Hoja de Ruta
 - [x] **Fase 1 (Frontend):** Construcción del Frontend moderno:

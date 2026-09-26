@@ -1376,3 +1376,177 @@ body {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* ==========================================================================
+   Splash Screen (3 Segundos con Logo Inventado)
+   ========================================================================== */
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #0f172a 0%, #070a12 85%, #03060c 100%);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  overflow: hidden;
+  transition: opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1), transform 0.65s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.65s;
+}
+
+.splash-screen.fade-out {
+  opacity: 0;
+  transform: scale(1.04);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.splash-ambient-halo {
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.22) 0%, rgba(59, 130, 246, 0.08) 50%, transparent 75%);
+  filter: blur(45px);
+  animation: splashHaloPulse 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes splashHaloPulse {
+  0%, 100% { transform: scale(0.9); opacity: 0.6; }
+  50% { transform: scale(1.18); opacity: 1; }
+}
+
+.splash-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.splash-logo-wrapper {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.splash-rings {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.splash-rings .ring {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.ring-outer {
+  width: 140px;
+  height: 140px;
+  border: 1px dashed rgba(56, 189, 248, 0.35);
+  animation: ringRotateClockwise 12s linear infinite;
+}
+
+.ring-middle {
+  width: 118px;
+  height: 118px;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-left-color: #38bdf8;
+  border-right-color: #10b981;
+  animation: ringRotateCounter 7s linear infinite;
+}
+
+.ring-inner {
+  width: 86px;
+  height: 86px;
+  border: 1px dotted rgba(6, 182, 212, 0.45);
+  animation: ringRotateClockwise 4s linear infinite;
+}
+
+@keyframes ringRotateClockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ringRotateCounter {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+.splash-logo-svg {
+  animation: splashLogoScale 2.4s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 18px rgba(56, 189, 248, 0.45));
+}
+
+@keyframes splashLogoScale {
+  0% { transform: scale(0.96); }
+  100% { transform: scale(1.04); }
+}
+
+.splash-text-group {
+  margin-bottom: 24px;
+}
+
+.splash-title {
+  font-family: var(--font-sans);
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: #f8fafc;
+  text-shadow: 0 0 24px rgba(59, 130, 246, 0.5);
+  margin-bottom: 6px;
+}
+
+.splash-highlight {
+  background: linear-gradient(90deg, #38bdf8, #818cf8, #34d399);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.splash-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.825rem;
+  letter-spacing: 0.12em;
+  color: #60a5fa;
+  text-transform: uppercase;
+}
+
+.splash-loader-bar {
+  width: 240px;
+  height: 5px;
+  background: rgba(30, 41, 59, 0.8);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.splash-loader-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #38bdf8, #3b82f6, #10b981);
+  border-radius: var(--radius-full);
+  animation: splashProgress 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes splashProgress {
+  0% { width: 0%; }
+  35% { width: 45%; }
+  75% { width: 85%; }
+  100% { width: 100%; }
+}
+
+.splash-version {
+  font-family: var(--font-mono);
+  font-size: 0.725rem;
+  color: var(--text-muted);
+}

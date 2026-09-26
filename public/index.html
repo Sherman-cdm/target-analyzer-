@@ -10,6 +10,62 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- Splash Screen de Inicialización (3 Segundos) -->
+  <div id="splashScreen" class="splash-screen">
+    <div class="splash-ambient-halo"></div>
+    <div class="splash-content">
+      <div class="splash-logo-wrapper">
+        <div class="splash-rings">
+          <div class="ring ring-outer"></div>
+          <div class="ring ring-middle"></div>
+          <div class="ring ring-inner"></div>
+        </div>
+        <!-- Logo Inventado Target Analyzer (Vectorial & Glow) -->
+        <svg class="splash-logo-svg" width="104" height="104" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#38bdf8"/>
+              <stop offset="50%" stop-color="#3b82f6"/>
+              <stop offset="100%" stop-color="#818cf8"/>
+            </linearGradient>
+            <linearGradient id="coreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#06b6d4"/>
+              <stop offset="100%" stop-color="#10b981"/>
+            </linearGradient>
+            <filter id="logoGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="3.5" result="blur"/>
+              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+            </filter>
+          </defs>
+          <!-- Hexágono exterior de focalización -->
+          <polygon points="50,4 90,26 90,74 50,96 10,74 10,26" stroke="url(#logoGrad)" stroke-width="2" fill="none" stroke-opacity="0.4" stroke-dasharray="5 3"/>
+          <!-- Círculos de telemetría concéntricos -->
+          <circle cx="50" cy="50" r="32" stroke="url(#logoGrad)" stroke-width="2" fill="none" filter="url(#logoGlow)"/>
+          <circle cx="50" cy="50" r="22" stroke="url(#coreGrad)" stroke-width="1.5" stroke-dasharray="8 6" fill="none"/>
+          <!-- Mirilla / Retícula de precisión -->
+          <line x1="50" y1="12" x2="50" y2="30" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="50" y1="70" x2="50" y2="88" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="12" y1="50" x2="30" y2="50" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="70" y1="50" x2="88" y2="50" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Núcleo de energía pulsante -->
+          <circle cx="50" cy="50" r="8" fill="url(#coreGrad)" filter="url(#logoGlow)"/>
+          <circle cx="50" cy="50" r="3" fill="#ffffff"/>
+        </svg>
+      </div>
+
+      <div class="splash-text-group">
+        <h1 class="splash-title">TARGET<span class="splash-highlight">ANALYZER</span></h1>
+        <p class="splash-subtitle" id="splashStatusText">INICIALIZANDO MOTOR CRAWLER...</p>
+      </div>
+
+      <!-- Barra de Carga de 3 Segundos -->
+      <div class="splash-loader-bar">
+        <div class="splash-loader-fill"></div>
+      </div>
+      <span class="splash-version">v1.0 &bull; Engine Headless Ready</span>
+    </div>
+  </div>
+
   <!-- Fondo con efecto de gradiente ambiental -->
   <div class="ambient-glow"></div>
 

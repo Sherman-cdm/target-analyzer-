@@ -75,8 +75,13 @@ let currentAnalysisData = null;
 let currentDeviceMode = 'desktop';
 const STORAGE_KEY_HISTORY = 'target_analyzer_history';
 
+// Splash Screen Elements
+const splashScreen = document.getElementById('splashScreen');
+const splashStatusText = document.getElementById('splashStatusText');
+
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
+  initSplashScreen();
   setupSampleButtons();
   setupInputListeners();
   setupModal();
@@ -86,6 +91,32 @@ document.addEventListener('DOMContentLoaded', () => {
   loadRecentHistory();
   checkBackendHealth();
 });
+
+// Control del Splash Screen (3 Segundos exactos)
+function initSplashScreen() {
+  if (!splashScreen) return;
+  document.body.style.overflow = 'hidden';
+
+  setTimeout(() => {
+    if (splashStatusText) splashStatusText.textContent = 'CARGANDO MÓDULOS DE RED & BOT...';
+  }, 1000);
+
+  setTimeout(() => {
+    if (splashStatusText) splashStatusText.textContent = 'CALIBRANDO SISTEMA DE TELEMETRÍA...';
+  }, 2000);
+
+  setTimeout(() => {
+    if (splashStatusText) splashStatusText.textContent = 'SISTEMA LISTO';
+  }, 2700);
+
+  setTimeout(() => {
+    splashScreen.classList.add('fade-out');
+    document.body.style.overflow = 'auto';
+    setTimeout(() => {
+      splashScreen.style.display = 'none';
+    }, 650);
+  }, 3000);
+}
 
 // Limpieza y visibilidad del botón clear
 function setupInputListeners() {

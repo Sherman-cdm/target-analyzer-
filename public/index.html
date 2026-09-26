@@ -90,6 +90,9 @@
         </div>
       </div>
       <div class="header-right">
+        <button type="button" id="openCompareBtn" class="pill-button compare-header-btn" title="Comparar dos sitios web">
+          <span>⚖️</span> Comparar
+        </button>
         <div class="status-indicator">
           <span class="status-dot"></span>
           <span class="status-text" id="engineStatus">Motor Bot Listo</span>
@@ -116,6 +119,7 @@
             required
             spellcheck="false"
           >
+          <span class="kbd-hint" id="kbdHint" title="Atajo: presiona / o Ctrl+K para buscar">/</span>
           <button type="button" id="clearBtn" class="clear-btn" title="Limpiar campo" style="display: none;">
             &times;
           </button>
@@ -131,23 +135,23 @@
         </button>
       </form>
 
-      <!-- Quick sample suggestions -->
-      <div class="quick-samples">
-        <span class="samples-label">Objetivos sugeridos:</span>
-        <button type="button" class="sample-tag" data-url="https://github.com">github.com</button>
-        <button type="button" class="sample-tag" data-url="https://wikipedia.org">wikipedia.org</button>
-        <button type="button" class="sample-tag" data-url="https://cloudflare.com">cloudflare.com</button>
-        <button type="button" class="sample-tag" data-url="https://vercel.com">vercel.com</button>
-      </div>
-
-      <!-- Recent History Bar -->
-      <div id="recentHistoryContainer" class="recent-history-bar" style="display: none;">
-        <div class="history-label-group">
-          <span class="history-icon">🕒</span>
-          <span class="history-label">Recientes:</span>
+      <!-- Barra combinada: Últimas páginas consultadas y Favoritos -->
+      <div id="recentHistoryContainer" class="recent-history-bar">
+        <div class="history-view-toggles">
+          <button type="button" id="toggleRecentBtn" class="view-toggle-btn active" title="Ver páginas consultadas">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Consultadas</span>
+          </button>
+          <button type="button" id="toggleFavoritesBtn" class="view-toggle-btn" title="Ver sitios favoritos">
+            <span>⭐</span>
+            <span>Favoritos</span>
+          </button>
         </div>
         <div id="historyList" class="history-items"></div>
-        <button type="button" id="clearHistoryBtn" class="clear-history-link" title="Borrar historial">Limpiar</button>
+        <button type="button" id="clearHistoryBtn" class="clear-history-link" title="Borrar historial completo" style="display: none;">Limpiar</button>
       </div>
     </section>
 
@@ -206,13 +210,32 @@
           <span class="badge badge-shield" id="resSecurityGrade">Grado A+</span>
         </div>
         <div class="overview-actions">
+          <button type="button" id="toggleFavActionBtn" class="action-btn" title="Guardar/quitar de favoritos">
+            <span id="favIcon">⭐</span>
+            <span id="favText">Favorito</span>
+          </button>
+          <button type="button" id="shareAnalysisBtn" class="action-btn" title="Copiar enlace para compartir">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            Compartir
+          </button>
+          <button type="button" id="exportPdfBtn" class="action-btn" title="Exportar o imprimir informe en PDF">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9V2h12v7"></path>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <path d="M6 14h12v8H6z"></path>
+            </svg>
+            Imprimir / PDF
+          </button>
           <button type="button" id="exportJsonBtn" class="action-btn" title="Exportar reporte en JSON">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
               <polyline points="7 10 12 15 17 10"></polyline>
               <line x1="12" y1="15" x2="12" y2="3"></line>
             </svg>
-            Exportar JSON
+            JSON
           </button>
         </div>
       </section>
@@ -235,81 +258,238 @@
 
       <!-- TAB 1: Main Dashboard Grid -->
       <div id="tabDashboard" class="tab-content active">
+        
+        <!-- Lighthouse Scores Strip (Métricas Radiales 0-100) -->
+        <section class="lighthouse-strip">
+          <div class="score-card">
+            <div class="radial-gauge" id="gaugeSecurity">
+              <svg viewBox="0 0 36 36" class="circular-chart green">
+                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path class="circle" id="circleSecurity" stroke-dasharray="94, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <text x="18" y="20.35" class="percentage" id="scoreSecurityText">94</text>
+              </svg>
+            </div>
+            <div class="score-info">
+              <span class="score-title">Seguridad</span>
+              <span class="score-sub">HTTPS &amp; HSTS</span>
+            </div>
+          </div>
+
+          <div class="score-card">
+            <div class="radial-gauge" id="gaugePerformance">
+              <svg viewBox="0 0 36 36" class="circular-chart green">
+                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path class="circle" id="circlePerformance" stroke-dasharray="91, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <text x="18" y="20.35" class="percentage" id="scorePerformanceText">91</text>
+              </svg>
+            </div>
+            <div class="score-info">
+              <span class="score-title">Rendimiento</span>
+              <span class="score-sub">Latencia &amp; CDN</span>
+            </div>
+          </div>
+
+          <div class="score-card">
+            <div class="radial-gauge" id="gaugeSeo">
+              <svg viewBox="0 0 36 36" class="circular-chart green">
+                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path class="circle" id="circleSeo" stroke-dasharray="96, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <text x="18" y="20.35" class="percentage" id="scoreSeoText">96</text>
+              </svg>
+            </div>
+            <div class="score-info">
+              <span class="score-title">SEO &amp; Indexación</span>
+              <span class="score-sub">Meta Tags &amp; OG</span>
+            </div>
+          </div>
+
+          <div class="score-card">
+            <div class="radial-gauge" id="gaugePractices">
+              <svg viewBox="0 0 36 36" class="circular-chart green">
+                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path class="circle" id="circlePractices" stroke-dasharray="88, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <text x="18" y="20.35" class="percentage" id="scorePracticesText">88</text>
+              </svg>
+            </div>
+            <div class="score-info">
+              <span class="score-title">Mejores Prácticas</span>
+              <span class="score-sub">Modern Web Standards</span>
+            </div>
+          </div>
+        </section>
+
         <div class="dashboard-grid">
           
-          <!-- Left / Hero Column: Screenshot Showcase (CRÍTICO) -->
-          <article class="card card-screenshot">
-            <div class="card-header">
-              <div class="card-title-group">
-                <span class="card-icon">📸</span>
-                <div>
-                  <h2>Captura en Vivo del Bot</h2>
-                  <p class="card-subtitle">Renderizado real tomado por el navegador headless</p>
+          <!-- Left / Hero Column: Screenshot Showcase & Waterfall -->
+          <div class="hero-column">
+            
+            <article class="card card-screenshot">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <span class="card-icon">📸</span>
+                  <div>
+                    <h2>Captura en Vivo del Bot</h2>
+                    <p class="card-subtitle">Renderizado real tomado por el navegador headless</p>
+                  </div>
+                </div>
+                
+                <!-- Device & Action Controls -->
+                <div class="screenshot-actions">
+                  <!-- Device Viewport Switcher -->
+                  <div class="device-switcher" title="Modo de vista previa">
+                    <button type="button" class="device-btn active" data-device="desktop" title="Vista Escritorio (1280x800)">
+                      🖥️
+                    </button>
+                    <button type="button" class="device-btn" data-device="tablet" title="Vista Tablet (768x1024)">
+                      📱 Tablet
+                    </button>
+                    <button type="button" class="device-btn" data-device="mobile" title="Vista Móvil (390x844)">
+                      📱 Móvil
+                    </button>
+                  </div>
+
+                  <button type="button" id="zoomScreenshotBtn" class="pill-button" title="Ver en pantalla completa">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M15 3h6v6"></path>
+                      <path d="M9 21H3v-6"></path>
+                      <path d="M21 3l-7 7"></path>
+                      <path d="M3 21l7-7"></path>
+                    </svg>
+                    Ampliar
+                  </button>
+                  <a id="downloadScreenshotBtn" href="#" download="screenshot.png" class="pill-button" title="Descargar imagen en alta resolución">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Guardar PNG
+                  </a>
                 </div>
               </div>
-              
-              <!-- Device & Action Controls -->
-              <div class="screenshot-actions">
-                <!-- Device Viewport Switcher -->
-                <div class="device-switcher" title="Modo de vista previa">
-                  <button type="button" class="device-btn active" data-device="desktop" title="Vista Escritorio (1280x800)">
-                    🖥️
-                  </button>
-                  <button type="button" class="device-btn" data-device="tablet" title="Vista Tablet (768x1024)">
-                    📱 Tablet
-                  </button>
-                  <button type="button" class="device-btn" data-device="mobile" title="Vista Móvil (390x844)">
-                    📱 Móvil
-                  </button>
+
+              <!-- Browser Frame Mockup -->
+              <div id="browserMockup" class="browser-window mode-desktop">
+                <div class="browser-toolbar">
+                  <div class="window-controls">
+                    <span class="win-btn close"></span>
+                    <span class="win-btn min"></span>
+                    <span class="win-btn max"></span>
+                  </div>
+                  <div class="browser-url-bar">
+                    <span class="lock-icon">🔒</span>
+                    <span id="browserFrameUrl" class="frame-url-text">https://...</span>
+                  </div>
+                </div>
+                <div class="screenshot-display-area" id="screenshotContainer">
+                  <img id="siteScreenshot" src="" alt="Captura del sitio web objetivo" class="screenshot-img">
+                  <div class="screenshot-overlay">
+                    <span>Click para vista interactiva completa</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Snapshot Metadata -->
+              <div class="screenshot-footer">
+                <span id="screenshotDimensions">Resolución: 1280 x 800</span>
+                <span id="screenshotTimestamp">Capturado: Justo ahora</span>
+              </div>
+            </article>
+
+            <!-- Card: Waterfall & Tiempos de Carga (HTTP & Render Lifecycle) -->
+            <article class="card card-waterfall">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <span class="card-icon">⚡</span>
+                  <div>
+                    <h3>Waterfall y Tiempos de Carga</h3>
+                    <p class="card-subtitle">Desglose del ciclo de conexión de red, handshake SSL y renderizado inicial</p>
+                  </div>
+                </div>
+                <div class="waterfall-badge-total" id="waterfallTotalBadge">
+                  <span class="pulse-dot"></span>
+                  <span id="waterfallTotalLabel">Total: 248 ms</span>
+                </div>
+              </div>
+
+              <!-- Barra Continua Acumulativa (Waterfall Bar) -->
+              <div class="waterfall-bar-track" title="Distribución acumulada de tiempos">
+                <div class="waterfall-bar-seg dns" id="barSegDns" style="width: 14%;" title="DNS Lookup"></div>
+                <div class="waterfall-bar-seg tls" id="barSegTls" style="width: 24%;" title="TLS Handshake"></div>
+                <div class="waterfall-bar-seg ttfb" id="barSegTtfb" style="width: 42%;" title="TTFB (Time to First Byte)"></div>
+                <div class="waterfall-bar-seg dom" id="barSegDom" style="width: 20%;" title="DOM Render"></div>
+              </div>
+
+              <!-- Desglose por Etapas -->
+              <div class="waterfall-stages-list">
+                
+                <!-- Etapa 1: DNS -->
+                <div class="waterfall-stage-row">
+                  <div class="stage-info">
+                    <span class="stage-dot dot-dns"></span>
+                    <span class="stage-name">Resolución DNS (Lookup)</span>
+                  </div>
+                  <div class="stage-meter-wrap">
+                    <div class="stage-meter-bar bg-dns" id="meterDns" style="width: 35%;"></div>
+                  </div>
+                  <div class="stage-time" id="valTimeDns">24 ms</div>
                 </div>
 
-                <button type="button" id="zoomScreenshotBtn" class="pill-button" title="Ver en pantalla completa">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M15 3h6v6"></path>
-                    <path d="M9 21H3v-6"></path>
-                    <path d="M21 3l-7 7"></path>
-                    <path d="M3 21l7-7"></path>
-                  </svg>
-                  Ampliar
-                </button>
-                <a id="downloadScreenshotBtn" href="#" download="screenshot.png" class="pill-button" title="Descargar imagen">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="7 10 12 15 17 10"></polyline>
-                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                  </svg>
-                  Guardar
-                </a>
-              </div>
-            </div>
+                <!-- Etapa 2: TLS Handshake -->
+                <div class="waterfall-stage-row">
+                  <div class="stage-info">
+                    <span class="stage-dot dot-tls"></span>
+                    <span class="stage-name">Conexión TCP &amp; Handshake TLS</span>
+                  </div>
+                  <div class="stage-meter-wrap">
+                    <div class="stage-meter-bar bg-tls" id="meterTls" style="width: 55%;"></div>
+                  </div>
+                  <div class="stage-time" id="valTimeTls">48 ms</div>
+                </div>
 
-            <!-- Browser Frame Mockup -->
-            <div id="browserMockup" class="browser-window mode-desktop">
-              <div class="browser-toolbar">
-                <div class="window-controls">
-                  <span class="win-btn close"></span>
-                  <span class="win-btn min"></span>
-                  <span class="win-btn max"></span>
+                <!-- Etapa 3: TTFB -->
+                <div class="waterfall-stage-row">
+                  <div class="stage-info">
+                    <span class="stage-dot dot-ttfb"></span>
+                    <span class="stage-name">Tiempo hasta Primer Byte (TTFB)</span>
+                  </div>
+                  <div class="stage-meter-wrap">
+                    <div class="stage-meter-bar bg-ttfb" id="meterTtfb" style="width: 85%;"></div>
+                  </div>
+                  <div class="stage-time" id="valTimeTtfb">112 ms</div>
                 </div>
-                <div class="browser-url-bar">
-                  <span class="lock-icon">🔒</span>
-                  <span id="browserFrameUrl" class="frame-url-text">https://...</span>
-                </div>
-              </div>
-              <div class="screenshot-display-area" id="screenshotContainer">
-                <img id="siteScreenshot" src="" alt="Captura del sitio web objetivo" class="screenshot-img">
-                <div class="screenshot-overlay">
-                  <span>Click para vista interactiva completa</span>
-                </div>
-              </div>
-            </div>
 
-            <!-- Snapshot Metadata -->
-            <div class="screenshot-footer">
-              <span id="screenshotDimensions">Resolución: 1280 x 800</span>
-              <span id="screenshotTimestamp">Capturado: Justo ahora</span>
-            </div>
-          </article>
+                <!-- Etapa 4: Descarga DOM y Render -->
+                <div class="waterfall-stage-row">
+                  <div class="stage-info">
+                    <span class="stage-dot dot-dom"></span>
+                    <span class="stage-name">Descarga de Contenido &amp; Render DOM</span>
+                  </div>
+                  <div class="stage-meter-wrap">
+                    <div class="stage-meter-bar bg-dom" id="meterDom" style="width: 48%;"></div>
+                  </div>
+                  <div class="stage-time" id="valTimeDom">64 ms</div>
+                </div>
+              </div>
+
+              <!-- Resumen de Protocolo & Optimización -->
+              <div class="waterfall-footer">
+                <div class="footer-stat">
+                  <span class="footer-stat-label">Protocolo:</span>
+                  <span class="footer-stat-val font-mono" id="waterfallProtocol">HTTP/2</span>
+                </div>
+                <div class="footer-stat">
+                  <span class="footer-stat-label">Compresión:</span>
+                  <span class="footer-stat-val text-success" id="waterfallCompression">Brotli (br) Activo</span>
+                </div>
+                <div class="footer-stat">
+                  <span class="footer-stat-label">Diagnóstico:</span>
+                  <span class="badge badge-success" id="waterfallDiagnosis">⚡ Carga Rápida</span>
+                </div>
+              </div>
+            </article>
+
+          </div> <!-- Fin .hero-column -->
 
           <!-- Right Column: Data Summary Cards -->
           <div class="data-column">
@@ -386,25 +566,70 @@
               <div class="tech-tags-container" id="techTagsContainer"></div>
             </article>
 
-            <!-- Card 4: Metadatos -->
-            <article class="card">
+            <!-- Card 4: SEO, Metadatos Semánticos & Previsualización Social -->
+            <article class="card unified-seo-card">
               <div class="card-header">
                 <div class="card-title-group">
-                  <span class="card-icon">📄</span>
+                  <span class="card-icon">🏷️</span>
                   <div>
-                    <h3>Metadatos Semánticos</h3>
-                    <p class="card-subtitle">Información del DOM y SEO</p>
+                    <h3>SEO &amp; Presencia Social</h3>
+                    <p class="card-subtitle">Metadatos Open Graph, etiquetas semánticas y vista previa</p>
                   </div>
                 </div>
-              </div>
-              <div class="meta-content">
-                <div class="meta-group">
-                  <span class="meta-label">Título del Sitio</span>
-                  <p class="meta-text" id="metaTitle">Título</p>
+                <!-- Selector de Plataforma Social -->
+                <div class="social-tabs" title="Cambiar previsualización">
+                  <button type="button" class="social-tab-btn active" data-social="whatsapp">WhatsApp</button>
+                  <button type="button" class="social-tab-btn" data-social="twitter">Twitter / X</button>
+                  <button type="button" class="social-tab-btn" data-social="linkedin">LinkedIn</button>
                 </div>
-                <div class="meta-group">
-                  <span class="meta-label">Descripción</span>
-                  <p class="meta-text" id="metaDescription">Descripción</p>
+              </div>
+
+              <div class="seo-unified-body">
+                <!-- Columna Izquierda: Ficha de Metadatos del DOM -->
+                <div class="seo-meta-pane">
+                  <div class="meta-field-group">
+                    <div class="meta-field-header">
+                      <span class="meta-field-label">Título del Sitio (Meta Title)</span>
+                      <span class="meta-field-len" id="metaTitleLen">0 carac.</span>
+                    </div>
+                    <div class="meta-field-value" id="metaTitle">Cargando título...</div>
+                  </div>
+
+                  <div class="meta-field-group">
+                    <div class="meta-field-header">
+                      <span class="meta-field-label">Descripción (Meta Description)</span>
+                      <span class="meta-field-len" id="metaDescLen">0 carac.</span>
+                    </div>
+                    <div class="meta-field-value meta-desc-value" id="metaDescription">Cargando descripción...</div>
+                  </div>
+
+                  <!-- Checklist de Calidad SEO & Seguridad -->
+                  <div class="meta-audit-checklist">
+                    <div class="checklist-item pass" id="checkOg">
+                      <span class="chk-icon">✓</span> <span>Etiquetas Open Graph (og:title, og:image)</span>
+                    </div>
+                    <div class="checklist-item pass" id="checkViewport">
+                      <span class="chk-icon">✓</span> <span>Viewport Mobile Responsive</span>
+                    </div>
+                    <div class="checklist-item pass" id="checkMixedContent">
+                      <span class="chk-icon">✓</span> <span>Recursos 100% Cifrados (Sin Mixed Content)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Columna Derecha: Tarjeta Social Interactiva en Vivo -->
+                <div class="seo-preview-pane">
+                  <span class="preview-pane-caption">Renderizado en aplicación:</span>
+                  <div id="socialCardBox" class="social-mockup-card platform-whatsapp">
+                    <div class="social-card-img-wrap">
+                      <img id="socialCardImg" src="" alt="OpenGraph Preview">
+                    </div>
+                    <div class="social-card-content">
+                      <span class="social-card-domain" id="socialCardDomain">github.com</span>
+                      <h4 class="social-card-title" id="socialCardTitle">GitHub: Let’s build from here</h4>
+                      <p class="social-card-desc" id="socialCardDesc">GitHub is where over 100 million developers shape the future of software...</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </article>
@@ -445,6 +670,11 @@
                 <h2>Infraestructura de Red y DNS</h2>
                 <p class="card-subtitle">Información del servidor, registros de dominio y conectividad</p>
               </div>
+            </div>
+            <!-- Filtro en tiempo real para DNS -->
+            <div class="table-filter-bar">
+              <span class="filter-icon">🔍</span>
+              <input type="text" id="networkFilterInput" class="filter-input" placeholder="Filtrar registros DNS o cabeceras...">
             </div>
           </div>
           <div class="dns-records-grid" id="dnsRecordsGrid">
@@ -517,15 +747,49 @@
       </div>
     </div>
 
+    <!-- Modal de Comparación (Modo Benchmark / Split View) -->
+    <div id="compareModal" class="modal-backdrop" style="display: none;">
+      <div class="modal-box compare-modal-box">
+        <div class="modal-header">
+          <div class="compare-header-title">
+            <span class="modal-icon">⚖️</span>
+            <div>
+              <h3>Comparador de Objetivos Web (Benchmark)</h3>
+              <p class="modal-subtitle">Compara el objetivo actual contra otro sitio en tiempo real</p>
+            </div>
+          </div>
+          <button type="button" id="closeCompareModalBtn" class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body compare-modal-body">
+          <div class="compare-input-row">
+            <div class="compare-target-badge">
+              <span class="label">Objetivo A (Actual):</span>
+              <strong id="compareTargetAUrl">-</strong>
+            </div>
+            <div class="compare-vs">VS</div>
+            <form id="compareForm" class="compare-form">
+              <input type="text" id="compareUrlInput" placeholder="Introduce la segunda URL (ej. https://gitlab.com)" required>
+              <button type="submit" id="runCompareBtn" class="submit-btn compare-submit">Comparar</button>
+            </form>
+          </div>
+
+          <div id="compareResultsArea" class="compare-results-area" style="display: none;">
+            <div class="compare-grid">
+              <!-- Columna Objetivo A -->
+              <div class="compare-col" id="compareColA"></div>
+              <!-- Columna Objetivo B -->
+              <div class="compare-col" id="compareColB"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Toast Notification (Copiado de IP, avisos rápidos) -->
     <div id="toastNotification" class="toast-popup" style="display: none;">
       <span id="toastMsg">Copiado al portapapeles</span>
     </div>
 
-    <!-- Footer -->
-    <footer class="app-footer">
-      <p>Target Analyzer &bull; Diseñado con HTML5, CSS3 moderno y JavaScript &bull; Rama develop activa</p>
-    </footer>
   </div>
 
   <script src="app.js"></script>

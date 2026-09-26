@@ -26,13 +26,14 @@ Aplicación web para analizar sitios web a través de una URL. Proporciona diagn
   - Estilos CSS con diseño moderno, componentes glassmorphism, responsive grid y animaciones (`public/styles.css`).
   - Lógica JavaScript para manejo de eventos, validaciones, estados de carga y renderizado de resultados (`public/app.js`).
   - Vista previa de screenshot con modal de ampliación.
-- [ ] **Fase 2:** Backend en Node.js (`server.js`):
-  - API endpoint `POST /api/analyze`.
-  - Integración del Bot Puppeteer para capturas de pantalla de alta resolución.
-  - Resolución de DNS / IP y geolocalización básica.
-  - Auditoría de certificados SSL y cabeceras de seguridad.
-  - Detección de tecnologías frontend, CMS y servidor.
-- [ ] **Fase 3:** Conexión end-to-end, pruebas y refinamientos.
+- [x] **Fase 2 (Backend & Robot):** Backend en Node.js y Express (`server.js` y `src/`):
+  - API endpoint `POST /api/analyze` y `GET /api/health`.
+  - Integración del Bot Puppeteer (`src/bot.js`) para capturas de pantalla reales en alta resolución JPEG Base64 y extracción del DOM.
+  - Resolución de DNS / IP (`src/analyzers/dns.js`) con registros A, AAAA, MX, NS y TXT.
+  - Auditoría de certificados SSL (`src/analyzers/ssl.js`) vía conexión TLS directa.
+  - Auditoría de cabeceras de seguridad y puntuación (`src/analyzers/headers.js`).
+  - Detección de tecnologías frontend, CMS y servidores (`src/analyzers/tech.js`).
+- [x] **Fase 3:** Conexión end-to-end, pruebas en vivo y refinamientos.
 
 ## 5. Estructura de Directorios Recomendada
 ```
